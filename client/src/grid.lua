@@ -8,11 +8,10 @@ Class = require "libs.hump.class"
 ]]
 Grid = Class {
     init = function(self, x, y, cellSize, width, height)
-        self.position.x = x
-        self.position.y = y
+        self.position = { x = x, y = y }
         self.cellSize = cellSize
-        self.size.w = width
-        self.size.h = height
+        self.size = { w = width, h = height }
+        self.grid = {}
 
         -- fill grid with -1s (ie unrevealed cells)
         for y = 1, self.size.h do
@@ -23,10 +22,10 @@ Grid = Class {
             table.insert(self.grid, line)
         end
     end,
-    position = { x = 0, y = 0 },
-    cellSize = 0,
-    size = { w = 0, h = 0 },
-    grid = {}
+    position,
+    cellSize,
+    size,
+    grid
 }
 
 function Grid:draw()

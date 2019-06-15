@@ -5,15 +5,15 @@ Class = require "libs.hump.class"
     -1 cell containing mines
 ]]
 Grid = Class {
-    size = { w = 0, h = 0 },
-    mines = 0,
-    grid = {}
+    size,
+    mines,
+    grid
 }
 
 function Grid:init(width, height, mines)
-    self.size.w = width
-    self.size.h = height
+    self.size = { w = width, h = height }
     self.mines = mines
+    self.grid = {}
 
     -- fill grid with 0s (ie blank cells)
     for y = 1, self.size.h do

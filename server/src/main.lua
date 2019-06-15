@@ -2,7 +2,6 @@ require "net.server"
 require "grid"
 require "game"
 local uuid = require "libs.uuid"
-require "libs.DataDumper"
 
 function love.load(arg)
     server = Server(arg[1])
@@ -111,7 +110,6 @@ function love.update(dt)
             return
         else
             local cells = game.grid:revealCells(data['cell'][1], data['cell'][2])
-            print(DataDumper(cells))
             server:sendMessage(event.peer:index(), { id = 4, success = true, cells = cells })
             return
         end
