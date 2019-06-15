@@ -1,3 +1,8 @@
+--[[
+    cells states:
+    0 to 8 cell with n mines in its neighbourhood
+    -1 cell containing mines
+]]
 Grid = {
     size = { w = 0, h = 0 },
     mines = 0,
