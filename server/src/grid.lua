@@ -95,7 +95,7 @@ end
 
 -- Return an array containing all the cells that can be revealed when trying to reveal the cell at position x, y
 function Grid:_revealCells(x, y, cells)
-    table.insert(cells, self.grid[y][x], { x, y })
+    cells[{ x, y }] = self.grid[y][x]
     if self.grid[y][x] == 0 then
         local neighbours = self:getNeighbours(x, y)
         for i = 1, #neighbours do
@@ -111,7 +111,7 @@ end
 
 function inTable(tbl, item)
     for key, value in pairs(tbl) do
-        if value[1] == item[1] and value[2] == item[2] then
+        if key[1] == item[1] and key[2] == item[2] then
             return true
         end
     end

@@ -25,12 +25,12 @@ function game:update(dt)
             grid = Grid(0, 0, 20, data['gridConfig']['size']['w'], data['gridConfig']['size']['h'])
         elseif data['id'] == 4 then
             local cells = data['cells']
-            for k, v in ipairs(cells) do
-                if k == -1 then
+            for k, v in pairs(cells) do
+                if v == -1 then
                     -- TODO: game over state
                     print("Game over")
                 else
-                    grid.grid[v[1]][v[2]] = k
+                    grid.grid[k[2]][k[1]] = v
                 end
             end
         end
