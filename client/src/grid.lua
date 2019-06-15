@@ -6,7 +6,7 @@
     -3 interogation cell
 ]]
 Grid = {
-    position = {x=0, y=0},  -- ;-;
+    position = {x=0, y=0},
     cellSize = 0,
     size = {w=0, h=0},
     grid = {}
@@ -36,27 +36,30 @@ function Grid:draw()
         for x=1, self.size.w do
             if self.grid[y][x] == -1 then
                 love.graphics.setColor(255, 255, 255)
-                love.graphics.rectangle("fill", self.position.x + (x-1)*self.cellSize + x, self.position.y + (y-1)*self.cellSize + y, self.cellSize, self.cellSize)
+                love.graphics.rectangle("fill", self.position.x + (x-1)*self.cellSize, self.position.y + (y-1)*self.cellSize,self.cellSize, self.cellSize)
             elseif self.grid[y][x] == -2 then
                 love.graphics.setColor(255, 0, 0)
-                love.graphics.rectangle("fill", self.position.x + (x-1)*self.cellSize + x, self.position.y + (y-1)*self.cellSize + y, self.cellSize, self.cellSize)
+                love.graphics.rectangle("fill", self.position.x + (x-1)*self.cellSize, self.position.y + (y-1)*self.cellSize, self.cellSize, self.cellSize)
             elseif self.grid[y][x] == -3 then
                 love.graphics.setColor(0, 255, 255)
-                love.graphics.rectangle("fill", self.position.x + (x-1)*self.cellSize + x, self.position.y + (y-1)*self.cellSize + y, self.cellSize, self.cellSize)
+                love.graphics.rectangle("fill", self.position.x + (x-1)*self.cellSize, self.position.y + (y-1)*self.cellSize, self.cellSize, self.cellSize)
             elseif self.grid[y][x] >= 0 and self.grid[y][x] <= 8 then
                 love.graphics.setColor(0, 255, 0)
-                love.graphics.rectangle("fill", self.position.x + (x-1)*self.cellSize + x, self.position.y + (y-1)*self.cellSize + y, self.cellSize, self.cellSize)
+                love.graphics.rectangle("fill", self.position.x + (x-1)*self.cellSize, self.position.y + (y-1)*self.cellSize, self.cellSize, self.cellSize)
                 love.graphics.setColor(0, 0, 0)
-                love.graphics.print(self.grid[y][x], self.position.x + (x-1)*self.cellSize + x + self.cellSize/2, self.position.y + (y-1)*self.cellSize + y + self.cellSize/2)
+                love.graphics.print(self.grid[y][x], self.position.x + (x-1)*self.cellSize + self.cellSize/2, self.position.y + (y-1)*self.cellSize + self.cellSize/2)
             end
         end
     end
 end
 
--- return the cell position in the grid according to its position on screen
+--[[
+    return the cell position in the grid according to its position on screen
+    if the position on the screen is out of the grid then retrun -1, -1
+]]
 function Grid:getCellCoordinates(x, y)
-    local x0 = math.floor(self.position.x + x / self.cellSize + 1)
-    local y0 = math.floor(self.position.x + y / self.cellSize + 1)
+    local x0 = self.position.x + math.floor(x / self.cellSize) + 1
+    local y0 = self.position.y + math.floor(y / self.cellSize) + 1
     if x0 >= 1 and y0 >= 1 and x0 <= self.size.w and y0 <= self.size.h then
         return x0, y0
     end
@@ -64,7 +67,7 @@ function Grid:getCellCoordinates(x, y)
 end
 
 function Grid:markCell(x, y)
-    if x0 >= 1 and y0 >= 1 and x0 <= self.size.w and y0 <= self.size.h then
+    if x >= 1 and y >= 1 and x <= self.size.w and y <= self.size.h then
         if self.grid[y][x] == -1 or self.grid[y][x] == -2 then
             self.grid[y][x] = self.grid[y][x] - 1
         elseif self.grid[y][x] == -3 then
