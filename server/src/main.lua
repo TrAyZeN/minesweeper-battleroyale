@@ -35,10 +35,10 @@ function love.update(dt)
         end
         local uuid = uuid()
         local game = Game(data['name'], data['maxPlayers'], Grid(data['gridWidth'], data['gridHeight'], data['gridMines']), data['password'])
-        game:registerPlayer(server, event.peer:index())
+        game:registerPlayer(event.peer:index())
         games[uuid] = game
         print("Created a game with ID: " .. uuid)
-        server:sendMessage(event.peer:index(), { id = 1, success = true, message = "Successfully created game " .. game.name, gameId = uuid })
+        server:sendMessage(event.peer:index(), { id = 1, success = true, message = "Successfully created game " .. game.name, gameId = uuid, gridConfig = game.grid:getConfig() })
         return
     elseif id == 2 then -- Join game
         if data['gameId'] == nil then
@@ -58,12 +58,12 @@ function love.update(dt)
                     server:sendMessage(event.peer:index(), { id = 2, success = false, message = "Missing password to join game " .. game.name })
                     return
                 else
-                    if game.password ~= data['password'] then
+                    if data['password'] ~= nil and game.password ~= data['password'] then
                         server:sendMessage(event.peer:index(), { id = 2, success = true, message = "Wrong password to join game " .. game.name })
                         return
                     else
                         server:sendMessage(event.peer:index(), { id = 2, success = true, gridConfig = game.grid:getConfig() })
-                        game:registerPlayer(server, event.peer:index())
+                        game:registerPlayer( event.peer:index())
                         return
                     end
                 end
@@ -110,7 +110,9 @@ function love.update(dt)
             server:sendMessage(event.peer:index(), { id = 4, success = false, message = "You should specify a cell to reveal" })
             return
         else
-            server:sendMessage(event.peer:index(), { id = 4, success = true, cells = game.grid:revealCells(data['cell'][1], data['cell'][2]) })
+            local cells = game.grid:revealCells(data['cell'][1], data['cell'][2])
+            print(DataDumper(cells))
+            server:sendMessage(event.peer:index(), { id = 4, success = true, cells = cells })
             return
         end
     end

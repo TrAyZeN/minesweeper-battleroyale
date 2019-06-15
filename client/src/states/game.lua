@@ -7,8 +7,7 @@ local game = {}
 function game:enter()
     client = Client()
     client:connect()
-    print("Client started")
-    client:sendMessage("I want the grid")
+    client:sendMessage({ id = 1, name = "Test Game", maxPlayers = 10, gridWidth = 10, gridHeight = 10, gridMines = 15 })
     grid = Grid(0, 0, 0, 0, 0)
 end
 
@@ -21,14 +20,18 @@ function game:update(dt)
     if event.type == "receive" then
         local data = client:readMessage(event.data)
         -- client:disconnect(DisconnectReason.CONNECTION_TERMINATED)
-        if data.type == "config" then
-            grid = Grid(0, 0, 20, data.config.size.w, data.config.size.h)
-        elseif data.type == "reveal" then
-            if data.cellState == -1 then
-                -- TODO: game over state
-                print("Game over")
-            else
-                grid.grid[data.position.y][data.position.x] = data.cellState
+        if data['id'] == 1 then
+            gameId = data['gameId']
+            grid = Grid(0, 0, 20, data['gridConfig']['size']['w'], data['gridConfig']['size']['h'])
+        elseif data['id'] == 4 then
+            local cells = data['cells']
+            for k, v in ipairs(cells) do
+                if k == -1 then
+                    -- TODO: game over state
+                    print("Game over")
+                else
+                    grid.grid[v[1]][v[2]] = k
+                end
             end
         end
     end
@@ -43,8 +46,9 @@ function game:mousepressed(x, y, button, istouch, presses)
     if button == 1 then
         local x, y = grid:getCellCoordinates(x, y)
         if x >= 1 and y >= 1 and x <= grid.size.w and y <= grid.size.h then
-            if grid.grid[y][x] == -1 then   -- if cell is unrevealed
-                client:sendMessage({"reveal", {x, y}})
+            if grid.grid[y][x] == -1 then
+                -- if cell is unrevealed
+                client:sendMessage({ id = 4, cell = { x, y }, gameId = gameId })
             end
         end
     elseif button == 2 then

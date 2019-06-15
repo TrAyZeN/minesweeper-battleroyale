@@ -1,5 +1,5 @@
 Gamestate = require "libs.hump.gamestate"
-menu = require "menu"
+menu = require "states.menu"
 
 function love.load()
     Gamestate.registerEvents()

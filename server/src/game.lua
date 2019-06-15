@@ -9,16 +9,18 @@ Game = Class {
         self.grid = grid
         self.password = password
         self.started = false
+        self.players = {}
     end,
     name,
     maxPlayers,
     grid,
     password,
     started,
-    players = {}
+    players
 }
 
 function Game:registerPlayer(peerIndex)
+    print(#self.players)
     if self.maxPlayers > #self.players then
         self.players[peerIndex] = true
         return true

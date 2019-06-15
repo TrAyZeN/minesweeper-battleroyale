@@ -1,6 +1,6 @@
 Class = require "libs.hump.class"
 require "net.client"
-game = require "game"
+game = require "states.game"
 
 local menu = {}
 
