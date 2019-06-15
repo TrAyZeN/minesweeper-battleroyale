@@ -4,7 +4,7 @@ Class = require "libs.hump.class"
     0 to 8 cell with n mines in its neighbourhood
     -1 cell containing mines
 ]]
-Grid = Class{
+Grid = Class {
     size = { w = 0, h = 0 },
     mines = 0,
     grid = {}
@@ -78,4 +78,12 @@ function Grid:getMineNeighbours(x, y)
         end
     end
     return mineNeighbours
+end
+
+function Grid:getConfig()
+    local config = {
+        size = self.size,
+        mines = self.mines
+    }
+    return config
 end

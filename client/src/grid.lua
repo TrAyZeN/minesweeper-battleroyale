@@ -45,7 +45,7 @@ function Grid:draw()
                 love.graphics.setColor(0, 255, 0)
                 love.graphics.rectangle("fill", self.position.x + (x - 1) * self.cellSize, self.position.y + (y - 1) * self.cellSize, self.cellSize, self.cellSize)
                 love.graphics.setColor(0, 0, 0)
-                love.graphics.print(self.grid[y][x], self.position.x + (x - 1) * self.cellSize + self.cellSize / 2, self.position.y + (y - 1) * self.cellSize + self.cellSize / 2)
+                love.graphics.print(self.grid[y][x], self.position.x + (x - 1) * self.cellSize + self.cellSize / 3, self.position.y + (y - 1) * self.cellSize + self.cellSize / 5)
             end
         end
     end
@@ -64,6 +64,11 @@ function Grid:getCellCoordinates(x, y)
     return -1, -1
 end
 
+--[[
+    transforms the cell into flagged cell if the cell is unrevealed
+    transforms the cell into interrogation if the cell is flagged
+    transforms the cell into unrevealed if the cell is interrogation
+]]
 function Grid:markCell(x, y)
     if x >= 1 and y >= 1 and x <= self.size.w and y <= self.size.h then
         if self.grid[y][x] == -1 or self.grid[y][x] == -2 then
@@ -76,5 +81,8 @@ end
 
 function Grid:revealCell(x, y)
     -- TODO: request server
+    if x >= 1 and y >= 1 and x <= self.size.w and y <= self.size.h then
+        return false
+    end
     return false
 end
