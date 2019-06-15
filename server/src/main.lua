@@ -1,7 +1,8 @@
 require "net.server"
+require "grid"
 
 function love.load()
-    server = Server:new()
+    server = Server()
     server:bind()
     print("Server started")
 end

@@ -1,18 +1,15 @@
+Class = require "libs.hump.class"
 local enet = require "enet"
 local BlobWriter = require "libs.BlobWriter"
 local BlobReader = require "libs.BlobReader"
 require "net.disconnect_reason"
 
-Client = {}
-
-function Client:new(hostname, port)
-    o = {}
-    setmetatable(o, self)
-    self.__index = self
-    self.hostname = hostname or "localhost"
-    self.port = port or 4201
-    return o
-end
+Client = Class {
+    init = function(self, hostname, port)
+        self.hostname = hostname or "localhost"
+        self.port = port or 4201
+    end
+}
 
 function Client:connect(timeout)
     self.host = enet.host_create()

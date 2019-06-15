@@ -1,7 +1,7 @@
 require "net.client"
 
 function love.load()
-    client = Client:new()
+    client = Client()
     client:connect()
     print("Client started")
     client:sendMessage({ "This is a table", "with 2 elements" })

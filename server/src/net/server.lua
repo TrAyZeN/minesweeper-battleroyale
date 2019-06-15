@@ -1,17 +1,14 @@
+Class = require "libs.hump.class"
 local enet = require "enet"
 local BlobWriter = require "libs.BlobWriter"
 local BlobReader = require "libs.BlobReader"
 require "net.disconnect_reason"
 
-Server = {}
-
-function Server:new(port)
-    o = {}
-    setmetatable(o, self)
-    self.__index = self
-    self.port = port or 4201
-    return o
-end
+Server = Class {
+    init = function(self, port)
+        self.port = port or 4201
+    end
+}
 
 function Server:bind()
     self.host = enet.host_create("*" .. ":" .. self.port)
@@ -47,4 +44,3 @@ end
 function Server:flush()
     self.host:flush()
 end
-
