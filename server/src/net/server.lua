@@ -18,8 +18,8 @@ function Server:update(timeout)
     return self.host:service(timeout or 0)
 end
 
-function Server:sendMessage(peer, data)
-    peer:send(BlobWriter():write(data):tostring())
+function Server:sendMessage(peerIndex, data)
+    self.host:get_peer(peerIndex):send(BlobWriter():write(data):tostring())
 end
 
 function Server:readMessage(data)
@@ -27,17 +27,17 @@ function Server:readMessage(data)
     return data
 end
 
-function Server:state(peer)
-    return peer:state()
+function Server:state(peerIndex)
+    return self.host:get_peer(peerIndex):state()
 end
 
-function Server:disconnect(peer, reason)
+function Server:disconnect(peerIndex, reason)
     if type(reason) ~= "table" or reason.value == nil then
         print("Bad argument #1 to Connection:disconnect: DisconnectReason expected, got " .. type(data) .. "!\n")
         return
     end
     self.host:flush()
-    peer:disconnect(reason.value)
+    self.host:get_peer(peerIndex):disconnect(reason.value)
     self.host:flush()
 end
 
