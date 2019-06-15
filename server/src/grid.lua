@@ -87,3 +87,62 @@ function Grid:getConfig()
     }
     return config
 end
+
+-- Return an array containing all the cells that can be revealed when trying to reveal the cell at position x, y
+function Grid:revealCells(x, y)
+    return self:_revealCells(x, y, {})
+end
+
+-- Return an array containing all the cells that can be revealed when trying to reveal the cell at position x, y
+function Grid:_revealCells(x, y, cells)
+    table.insert(cells, { x, y })
+    if self.grid[y][x] == 0 then
+        local neighbours = self:getNeighbours(x, y)
+        for i = 1, #neighbours do
+            local row = neighbours[i][1];
+            local column = neighbours[i][2];
+            if not inTable(cells, { row, column }) then
+                self:_revealCells(row, column, cells)
+            end
+        end
+    end
+    return cells
+end
+
+function inTable(tbl, item)
+    for key, value in pairs(tbl) do
+        if value[1] == item[1] and value[2] == item[2] then
+            return true
+        end
+    end
+    return false
+end
+
+-- Returns the neighbourhood of the cell
+function Grid:getNeighbours(x, y)
+    local cells = {}
+    -- range used to prevent getting elements out of grid length
+    local yRange = { y - 1, y + 1 }
+    if y == 1 then
+        yRange[1] = 1
+    elseif y == self.size.h then
+        yRange[2] = self.size.h
+    end
+
+    for i = yRange[1], yRange[2] do
+        -- range used to prevent getting elements out of grid length
+        local xRange = { x - 1, x + 1 }
+        if x == 1 then
+            xRange[1] = 1
+        elseif x == self.size.w then
+            xRange[2] = self.size.w
+        end
+
+        for j = xRange[1], xRange[2] do
+            if (i ~= y or j ~= x) then
+                table.insert(cells, { j, i })
+            end
+        end
+    end
+    return cells
+end

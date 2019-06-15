@@ -8,11 +8,13 @@ Game = Class {
         self.maxPlayers = maxPlayers <= 0 and 5 or maxPlayers
         self.grid = grid
         self.password = password
+        self.started = false
     end,
     name,
     maxPlayers,
     grid,
     password,
+    started,
     players = {}
 }
 
@@ -39,4 +41,12 @@ end
 
 function Game:setAlive(peerIndex, isAlive)
     self.players[peerIndex] = isAlive
+end
+
+function Game:start()
+    self.started = true
+end
+
+function Game:stop()
+    self.started = false
 end

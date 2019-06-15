@@ -2,6 +2,7 @@ require "net.server"
 require "grid"
 require "game"
 local uuid = require "libs.uuid"
+require "libs.DataDumper"
 
 function love.load(arg)
     server = Server(arg[1])
@@ -40,6 +41,10 @@ function love.update(dt)
         server:sendMessage(event.peer:index(), { id = 1, success = true, message = "Successfully created game " .. game.name, gameId = uuid })
         return
     elseif id == 2 then -- Join game
+        if data['gameId'] == nil then
+            server:sendMessage(event.peer:index(), { id = 2, success = false, message = "You need to specify the id of the game you want to join" })
+            return
+        end
         local game = games[data['gameId']]
         if game == nil then
             server:sendMessage(event.peer:index(), { id = 2, success = false, message = "Game does not exist" })
@@ -57,12 +62,56 @@ function love.update(dt)
                         server:sendMessage(event.peer:index(), { id = 2, success = true, message = "Wrong password to join game " .. game.name })
                         return
                     else
-                        server:sendMessage(event.peer:index(), { id = 2, success = true, message = "Successfully joined game " .. game.name })
+                        server:sendMessage(event.peer:index(), { id = 2, success = true, gridConfig = game.grid:getConfig() })
                         game:registerPlayer(server, event.peer:index())
                         return
                     end
                 end
             end
+        end
+    elseif id == 3 then -- Chat
+        if data['gameId'] == nil then
+            server:sendMessage(event.peer:index(), { id = 3, success = false, message = "You need to specify the id of the game you want to chat in" })
+            return
+        end
+        local game = games[data['gameId']]
+        if game == nil then
+            server:sendMessage(event.peer:index(), { id = 3, success = false, message = "Game does not exist" })
+            return
+        elseif not game:isIn(event.peer:index()) then
+            server:sendMessage(event.peer:index(), { id = 3, success = false, message = "You can't chat in this game" })
+            return
+        elseif data['message'] == nil then
+            server:sendMessage(event.peer:index(), { id = 3, success = false, message = "You should specify a message to send in the chat" })
+            return
+        elseif data['username'] == nil then
+            server:sendMessage(event.peer:index(), { id = 3, success = false, message = "You should specify your username to send a message in the chat" })
+            return
+        else
+            server:broadcast({ id = 3, username = data['username'], message = data['message']})
+            return
+        end
+    elseif id == 4 then -- Cell reveal
+        if data['gameId'] == nil then
+            server:sendMessage(event.peer:index(), { id = 4, success = false, message = "You need to specify the id of the game you are actually in" })
+            return
+        end
+        local game = games[data['gameId']]
+        if game == nil then
+            server:sendMessage(event.peer:index(), { id = 4, success = false, message = "Game does not exist" })
+            return
+        elseif not game:isIn(event.peer:index()) then
+            server:sendMessage(event.peer:index(), { id = 4, success = false, message = "You are not present in this game" })
+            return
+        elseif not game:isAlive(event.peer:index()) then
+            server:sendMessage(event.peer:index(), { id = 4, success = false, message = "You are dead, so you can't reveal any cell" })
+            return
+        elseif data['cell'] == nil then
+            server:sendMessage(event.peer:index(), { id = 4, success = false, message = "You should specify a cell to reveal" })
+            return
+        else
+            server:sendMessage(event.peer:index(), { id = 4, success = true, cells = game.grid:revealCells(data['cell'][1], data['cell'][2]) })
+            return
         end
     end
 end
