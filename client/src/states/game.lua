@@ -1,4 +1,3 @@
-Class = require "libs.hump.class"
 require "net.client"
 require "grid"
 
@@ -19,7 +18,6 @@ function game:update(dt)
 
     if event.type == "receive" then
         local data = client:readMessage(event.data)
-        -- client:disconnect(DisconnectReason.CONNECTION_TERMINATED)
         if data['id'] == 1 then
             gameId = data['gameId']
             grid = Grid(0, 0, 20, data['gridConfig']['size']['w'], data['gridConfig']['size']['h'])
@@ -30,7 +28,9 @@ function game:update(dt)
                     -- TODO: game over state
                     print("Game over")
                 else
-                    grid.grid[k[2]][k[1]] = v
+                    if grid.grid[k[2]][k[1]] ~= -2 and grid.grid[k[2]][k[1]] ~= -3 then     -- don't reveal flagged and interrogation cells
+                        grid.grid[k[2]][k[1]] = v
+                    end
                 end
             end
         end
