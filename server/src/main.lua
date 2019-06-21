@@ -33,7 +33,7 @@ function love.update(dt)
             return
         end
         local uuid = uuid()
-        local game = Game(data['name'], data['maxPlayers'], Grid(data['gridWidth'], data['gridHeight'], data['gridMines']), data['password'])
+        local game = Game(data['name'], data['maxPlayers'], Grid(data['gridWidth'], data['gridHeight'], data['gridMines'], os.time()), data['password'])
         game:registerPlayer(event.peer:index())
         games[uuid] = game
         print("Created a game with ID: " .. uuid)

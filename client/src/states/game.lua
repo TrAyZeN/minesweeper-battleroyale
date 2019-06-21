@@ -1,5 +1,17 @@
 require "net.client"
 require "grid"
+loveframes = require "libs.loveframes"
+
+local messageList = loveframes.Create("list")
+messageList:SetPos(0, 600)
+messageList:SetSize(240, 100)
+messageList:SetSpacing(5)
+messageList:SetState("game")
+
+local textInput = loveframes.Create("textinput")
+textInput:SetPos(0, 700)
+textInput:SetSize(240, 20)
+textInput:SetState("game")
 
 local game = {}
 
@@ -11,6 +23,8 @@ function game:enter()
 end
 
 function game:update(dt)
+    loveframes.update(dt)
+
     local event = client:update()
     if event == nil or not (event.type == "receive") then
         return
@@ -21,6 +35,10 @@ function game:update(dt)
         if data['id'] == 1 then
             gameId = data['gameId']
             grid = Grid(0, 0, 20, data['gridConfig']['size']['w'], data['gridConfig']['size']['h'])
+        elseif data['id'] == 3 then
+            local messageText = loveframes.Create("text")
+            messageText:SetText(string.format("%s: %s", data['username'], data['message']))
+            messageList:AddItem(messageText)
         elseif data['id'] == 4 then
             local cells = data['cells']
             for k, v in pairs(cells) do
@@ -39,10 +57,14 @@ function game:update(dt)
 end
 
 function game:draw()
+    loveframes.draw()
+
     grid:draw()
 end
 
 function game:mousepressed(x, y, button, istouch, presses)
+    loveframes.mousepressed(x, y, button)
+
     if button == 1 then
         local x, y = grid:getCellCoordinates(x, y)
         if x >= 1 and y >= 1 and x <= grid.size.w and y <= grid.size.h then
@@ -54,6 +76,31 @@ function game:mousepressed(x, y, button, istouch, presses)
     elseif button == 2 then
         grid:markCell(grid:getCellCoordinates(x, y))
     end
+end
+
+function game:mousereleased(x, y, button)
+    loveframes.mousereleased(x, y, button)
+end
+
+function game:keypressed(key, code)
+    if key == "return" then
+        if textInput:GetFocus() then    -- sends message to server
+            client:sendMessage({ id = 3, gameId = gameId, username = "test", message = textInput:GetText() })
+            textInput:SetText("")
+            textInput:SetFocus(false)
+        else
+            textInput:SetFocus(true)
+        end
+    end
+    loveframes.keypressed(key)
+end
+
+function game:keyreleased(key, code)
+    loveframes.keyreleased(key)
+end
+
+function love.textinput(text)
+	loveframes.textinput(text)
 end
 
 return game

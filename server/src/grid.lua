@@ -10,7 +10,7 @@ Grid = Class {
     grid
 }
 
-function Grid:init(width, height, mines)
+function Grid:init(width, height, mines, seed)
     self.size = { w = width, h = height }
     self.mines = mines
     self.grid = {}
@@ -25,7 +25,7 @@ function Grid:init(width, height, mines)
     end
 
     -- generate mines at random position
-    math.randomseed(os.time())
+    math.randomseed(seed)
     for m = 1, self.mines do
         local x, y = math.random(1, self.size.w), math.random(1, self.size.h)
         while self:isMine(x, y) do
