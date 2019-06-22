@@ -11,6 +11,7 @@ Grid = Class {
         self.position = { x = x, y = y }
         self.cellSize = cellSize
         self.size = { w = width, h = height }
+        self.flags = 0
         self.grid = {}
 
         -- fill grid with -1s (ie unrevealed cells)
@@ -25,6 +26,7 @@ Grid = Class {
     position,
     cellSize,
     size,
+    flags,
     grid
 }
 
@@ -70,18 +72,26 @@ end
 ]]
 function Grid:markCell(x, y)
     if x >= 1 and y >= 1 and x <= self.size.w and y <= self.size.h then
-        if self.grid[y][x] == -1 or self.grid[y][x] == -2 then
-            self.grid[y][x] = self.grid[y][x] - 1
+        if self.grid[y][x] == -1 then
+            self.grid[y][x] = -2
+            self.flags = self.flags + 1
+        elseif self.grid[y][x] == -2 then
+            self.grid[y][x] = -3
+            self.flags = self.flags - 1
         elseif self.grid[y][x] == -3 then
             self.grid[y][x] = -1
         end
     end
 end
 
-function Grid:revealCell(x, y)
-    -- TODO: request server
-    if x >= 1 and y >= 1 and x <= self.size.w and y <= self.size.h then
-        return false
+function Grid:getFlaggedCells()
+    local flaggedCells = {}
+    for y=1, self.size.h do
+        for x=1, self.size.w do
+            if self.grid[y][x] == -2 then
+                table.insert(flaggedCells, { x = x, y = y })
+            end
+        end
     end
-    return false
+    return flaggedCells
 end

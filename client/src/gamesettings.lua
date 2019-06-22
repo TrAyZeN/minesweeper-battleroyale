@@ -59,8 +59,4 @@ function GameSettings:applySettings()
     return success
 end
 
-function GameSettings:getSettings()
-    return
-end
-
 return GameSettings()

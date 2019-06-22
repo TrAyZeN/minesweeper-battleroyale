@@ -1,36 +1,24 @@
 game = require "states.game"
 loveframes = require "libs.loveframes"
-gamesettings = require "gamesettings"
+gameSettings = require "gamesettings"
+joinGameMenu = require "states.joingamemenu"
+createGameMenu = require "states.creategamemenu"
+settingsMenu = require "states.settingsmenu"
 
 local joinGameButton = loveframes.Create("button")
 local createGameButton = loveframes.Create("button")
 local settingsButton = loveframes.Create("button")
 local quitButton = loveframes.Create("button")
-
-local gameNameTextinput = loveframes.Create("textinput")
-local maxPlayersNumberbox = loveframes.Create("numberbox")
-local gridWidthNumberbox = loveframes.Create("numberbox")
-local gridHeightNumberbox = loveframes.Create("numberbox")
-local gridMinesNumberbox = loveframes.Create("numberbox")
-local confirmCreateGameButton = loveframes.Create("button")
-
-local screenResolutionMultichoice = loveframes.Create("multichoice")
-local fullscreenCheckbox = loveframes.Create("checkbox")
-local vsyncCheckbox = loveframes.Create("checkbox")
-local applychangesButton = loveframes.Create("button")
--- TODO: add volume
-
 local closeButton = loveframes.Create("button")
 
--- main menu widgets
 joinGameButton:Center()
 joinGameButton:SetPos(540, 300)
 joinGameButton:SetSize(200, 60)
 joinGameButton:SetText("Join Game")
 joinGameButton:SetState("mainmenu")
 function joinGameButton:OnClick()
-    loveframes.SetState("game")
-    Gamestate.switch(game)
+    closeButton:SetState("joingame")
+    loveframes.SetState("joingame")
 end
 
 createGameButton:SetPos(540, 390)
@@ -47,9 +35,9 @@ settingsButton:SetSize(200, 60)
 settingsButton:SetText("Settings")
 settingsButton:SetState("mainmenu")
 function settingsButton:OnClick()
-    screenResolutionMultichoice:SetText(string.format("%dx%d", gamesettings.windowSize.w, gamesettings.windowSize.h))
-    fullscreenCheckbox:SetChecked(gamesettings.fullscreen)
-    vsyncCheckbox:SetChecked(gamesettings.vsync)
+    settingsMenu.screenResolutionMultichoice:SetText(string.format("%dx%d", gameSettings.windowSize.w, gameSettings.windowSize.h))
+    settingsMenu.fullscreenCheckbox:SetChecked(gameSettings.fullscreen)
+    settingsMenu.vsyncCheckbox:SetChecked(gameSettings.vsync)
     closeButton:SetState("settings")
     loveframes.SetState("settings")
 end
@@ -62,71 +50,13 @@ function quitButton:OnClick()
     love.event.quit()
 end
 
-
--- create game widgets
-gameNameTextinput:SetPos(200, 100)
-gameNameTextinput:SetState("creategame")
-
-maxPlayersNumberbox:SetPos(200, 140)
-maxPlayersNumberbox:SetMin(2)
-maxPlayersNumberbox:SetState("creategame")
-
-gridWidthNumberbox:SetPos(200, 180)
-gridWidthNumberbox:SetMin(2)
-gridWidthNumberbox:SetState("creategame")
-
-gridHeightNumberbox:SetPos(200, 220)
-gridHeightNumberbox:SetMin(2)
-gridHeightNumberbox:SetState("creategame")
-
-gridMinesNumberbox:SetPos(200, 260)
-gridMinesNumberbox:SetMin(2)
-gridMinesNumberbox:SetState("creategame")
-
-confirmCreateGameButton:SetPos(200, 320)
-confirmCreateGameButton:SetText("Create game")
-confirmCreateGameButton:SetState("creategame")
-
--- settings widgets
-screenResolutionMultichoice:SetPos(200, 100)
-screenResolutionMultichoice:SetSize(120, 30)
-screenResolutionMultichoice:SetState("settings")
-local screenResolutions = love.window.getFullscreenModes(1)
-table.sort(screenResolutions, function(a, b) return a.width*a.height < b.width*b.height end)
-for _, resolution in pairs(screenResolutions) do
-    screenResolutionMultichoice:AddChoice(string.format("%dx%d", resolution.width, resolution.height))
-end
-
-fullscreenCheckbox:SetPos(200, 300)
-fullscreenCheckbox:SetSize(20, 20)
-fullscreenCheckbox:SetText("Fullscreen")
-fullscreenCheckbox:SetState("settings")
-
-vsyncCheckbox:SetPos(200, 350)
-vsyncCheckbox:SetSize(20, 20)
-vsyncCheckbox:SetText("Vsync")
-vsyncCheckbox:SetState("settings")
-
-applychangesButton:SetPos(200, 500)
-applychangesButton:SetSize(100, 20)
-applychangesButton:SetText("Apply Changes")
-applychangesButton:SetState("settings")
-function applychangesButton:OnClick()
-    local screenResolutionChoice = screenResolutionMultichoice:GetText()
-    gamesettings.windowSize.w = tonumber(screenResolutionChoice:sub(1, screenResolutionChoice:find("x") - 1))
-    gamesettings.windowSize.h = tonumber(screenResolutionChoice:sub(screenResolutionChoice:find("x") + 1, screenResolutionChoice:len()))
-    gamesettings.fullscreen = fullscreenCheckbox:GetChecked()
-    gamesettings.vsync = vsyncCheckbox:GetChecked()
-    gamesettings:save()
-    gamesettings:applySettings()
-end
-
 closeButton:SetPos(1140, 100)
 closeButton:SetSize(40, 40)
 closeButton:SetText("X")
 function closeButton:OnClick()
     loveframes.SetState("mainmenu")
 end
+
 
 local menu = {}
 

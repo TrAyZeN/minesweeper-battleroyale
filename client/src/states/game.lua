@@ -19,7 +19,7 @@ local game = {}
 function game:enter()
     client = Client()
     client:connect()
-    client:sendMessage({ id = 1, name = "Test Game", maxPlayers = 10, gridWidth = 15, gridHeight = 15, gridMines = 20 })
+    client:sendMessage({ id = 1, name = "Test Game", maxPlayers = 10, gridWidth = 10, gridHeight = 10, gridMines = 20 })
     grid = Grid(0, 0, 0, 0, 0)
 end
 
@@ -75,6 +75,7 @@ function game:mousepressed(x, y, button, istouch, presses)
             end
         end
     elseif button == 2 then
+        -- TODO: check if there is no more flags + send flagged cells to server
         grid:markCell(grid:getCellCoordinates(x, y))
     end
 end
@@ -86,8 +87,11 @@ end
 function game:keypressed(key, code)
     if key == "return" then
         if textInput:GetFocus() then    -- sends message to server
-            client:sendMessage({ id = 3, gameId = gameId, username = "test", message = textInput:GetText() })
-            textInput:SetText("")
+            local message = textInput:GetText()
+            if message ~= "" then
+                client:sendMessage({ id = 3, gameId = gameId, username = "username", message = message })
+                textInput:SetText("")
+            end
         else
             textInput:SetFocus(true)
         end
