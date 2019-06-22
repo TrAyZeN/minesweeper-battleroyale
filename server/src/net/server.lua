@@ -22,6 +22,10 @@ function Server:sendMessage(peerIndex, data)
     self.host:get_peer(peerIndex):send(BlobWriter():write(data):tostring())
 end
 
+function Server:broadcast(data)
+    self.host:broadcast(BlobWriter():write(data):tostring())
+end
+
 function Server:readMessage(data)
     data = BlobReader(data):read()
     return data
