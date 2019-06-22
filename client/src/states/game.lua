@@ -6,6 +6,7 @@ local messageList = loveframes.Create("list")
 messageList:SetPos(0, 600)
 messageList:SetSize(240, 100)
 messageList:SetSpacing(5)
+messageList:SetAutoScroll(true)
 messageList:SetState("game")
 
 local textInput = loveframes.Create("textinput")
@@ -18,7 +19,7 @@ local game = {}
 function game:enter()
     client = Client()
     client:connect()
-    client:sendMessage({ id = 1, name = "Test Game", maxPlayers = 10, gridWidth = 10, gridHeight = 10, gridMines = 15 })
+    client:sendMessage({ id = 1, name = "Test Game", maxPlayers = 10, gridWidth = 15, gridHeight = 15, gridMines = 20 })
     grid = Grid(0, 0, 0, 0, 0)
 end
 
@@ -87,7 +88,6 @@ function game:keypressed(key, code)
         if textInput:GetFocus() then    -- sends message to server
             client:sendMessage({ id = 3, gameId = gameId, username = "test", message = textInput:GetText() })
             textInput:SetText("")
-            textInput:SetFocus(false)
         else
             textInput:SetFocus(true)
         end
