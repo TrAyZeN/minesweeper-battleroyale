@@ -91,26 +91,10 @@ confirmCreateGameButton:SetState("creategame")
 screenResolutionMultichoice:SetPos(200, 100)
 screenResolutionMultichoice:SetSize(120, 30)
 screenResolutionMultichoice:SetState("settings")
-local screenResolutions = {
-    {640, 360},     -- 16:9
-    {640, 400},     -- 16:10
-    {640, 480},     -- 4:3 VGA
-    {800, 600},     -- 4:3 SVGA
-    {960, 600},     -- 16:10
-    {1024, 576},    -- 16:9
-    {1024, 768},    -- 4:3 XGA
-    {1280, 720},    -- 16:9
-    {1280, 960},    -- 4:3
-    {1440, 900},    -- 16:10
-    {1600, 900},    -- 16:9
-    {1920, 1080},   -- 16:9
-    {1920, 1200},   -- 16:10
-    {1920, 1440},   -- 4:3
-    {2560, 1440},   -- 16:9
-    {3840, 2160}    -- 16:9
-}
+local screenResolutions = love.window.getFullscreenModes(1)
+table.sort(screenResolutions, function(a, b) return a.width*a.height < b.width*b.height end)
 for _, resolution in pairs(screenResolutions) do
-    screenResolutionMultichoice:AddChoice(string.format("%dx%d", resolution[1], resolution[2]))
+    screenResolutionMultichoice:AddChoice(string.format("%dx%d", resolution.width, resolution.height))
 end
 
 fullscreenCheckbox:SetPos(200, 300)
@@ -129,8 +113,8 @@ applychangesButton:SetText("Apply Changes")
 applychangesButton:SetState("settings")
 function applychangesButton:OnClick()
     local screenResolutionChoice = screenResolutionMultichoice:GetText()
-    gamesettings.windowSize.w = tonumber(screenResolutionChoice:sub(1, screenResolutionChoice:find("x")-1))
-    gamesettings.windowSize.h = tonumber(screenResolutionChoice:sub(screenResolutionChoice:find("x")+1, screenResolutionChoice:len()))
+    gamesettings.windowSize.w = tonumber(screenResolutionChoice:sub(1, screenResolutionChoice:find("x") - 1))
+    gamesettings.windowSize.h = tonumber(screenResolutionChoice:sub(screenResolutionChoice:find("x") + 1, screenResolutionChoice:len()))
     gamesettings.fullscreen = fullscreenCheckbox:GetChecked()
     gamesettings.vsync = vsyncCheckbox:GetChecked()
     gamesettings:save()
@@ -143,7 +127,6 @@ closeButton:SetText("X")
 function closeButton:OnClick()
     loveframes.SetState("mainmenu")
 end
-
 
 local menu = {}
 
